@@ -19,7 +19,7 @@ class TaskExecutionMiddleware(middleware.Middleware):
 
     def before_process_message(self, broker, message):
         """Set task to RUNNING state"""
-        logger.info(f"Starting task {message.message_id}")
+        logger.info(f"Starting task with message_id={message.message_id}")
         self.tasks_repository.update_task_status(
             message_id=message.message_id,
             status=TaskStatus.RUNNING

@@ -53,11 +53,11 @@ class GrpcModule(Module):
     @provider
     @singleton
     def provide_grpc_server_config(self) -> GrpcServerConfig:
-        return GrpcServerConfig()
+        return GrpcServerConfig(port=50053)
 
     @provider
     @singleton
-    def provide_suggestions_grpc_service(self, tasks_service: TasksService) -> TasksGrpcService:
+    def provide_tasks_grpc_service(self, tasks_service: TasksService) -> TasksGrpcService:
         return TasksGrpcService(tasks_service=tasks_service)
 
     @provider
