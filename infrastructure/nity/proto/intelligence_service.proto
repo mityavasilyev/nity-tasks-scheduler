@@ -1,0 +1,42 @@
+// data_collection/proto/intelligence_service.proto
+
+syntax = "proto3";
+
+package channel_intelligence;
+
+service ChannelIntelligence {
+  // Channel collection
+  rpc StartTrackingNewChannel(StartTrackingNewChannelRequest) returns (StartTrackingNewChannelResponse);
+
+  rpc RevisitChannel(RevisitChannelRequest) returns (RevisitChannelResponse);
+
+  rpc GetChannelIdByUsername(GetChannelIdByUsernameRequest) returns (GetChannelIdByUsernameResponse);
+}
+
+message StartTrackingNewChannelRequest {
+  string channel_id = 1;
+}
+
+message StartTrackingNewChannelResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message RevisitChannelRequest {
+  int64 channel_id = 1;
+}
+
+message RevisitChannelResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message GetChannelIdByUsernameRequest {
+  string channel_username = 1;
+}
+
+message GetChannelIdByUsernameResponse {
+  bool success = 1;
+  string message = 2;
+}
+

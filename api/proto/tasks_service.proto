@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package tasks;
+
+service TasksService {
+
+  rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse);
+
+  rpc GetTask(GetTaskRequest) returns (GetTaskResponse);
+
+  rpc GetChannelTasks(GetChannelTasksRequest) returns (GetChannelTasksResponse);
+}
+
+enum TaskType {
+  START_TRACKING = 0;
+  REVISIT_CHANNEL = 1;
+}
+
+enum TaskStatus {
+  PENDING = 0;
+  RUNNING = 1;
+  COMPLETED = 2;
+  FAILED = 3;
+}
+
+message Task {
+  int64 task_id = 1;
+  int64 channel_id = 2;
+  TaskType task_type = 3;
+  TaskStatus task_status = 4;
+}
+
+message CreateTaskRequest {
+  int64 channel_id = 1;
+  TaskType task_type = 2;
+}
+
+message CreateTaskResponse {
+  int64 task_id = 1;
+  string error_message = 2;
+}
+
+message GetTaskRequest {
+  int64 task_id = 1;
+}
+
+message GetTaskResponse {
+  Task task = 1;
+  string error_message = 5;
+}
+
+message GetChannelTasksRequest {
+  int64 channel_id = 1;
+}
+
+message GetChannelTasksResponse {
+  repeated Task tasks = 1;
+  string error_message = 2;
+}
