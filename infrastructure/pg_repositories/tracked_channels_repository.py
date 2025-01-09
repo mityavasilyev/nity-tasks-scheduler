@@ -65,6 +65,8 @@ class TrackedChannelsRepository:
 
     def get_channels_due_revisit(self, interval_minutes: int) -> List[TrackedChannel]:
         """Get all channels that haven't been revisited in the specified interval"""
+
+        # All channels that were last time revisited BEFORE the cutoff time will be fetched
         cutoff_time = TimeUtils.current_datetime().timestamp() - (interval_minutes * 60)
         stmt = select(TrackedChannelEntity).where(
             TrackedChannelEntity.revisiting == True,

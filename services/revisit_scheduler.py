@@ -3,7 +3,7 @@ import asyncio
 from injector import inject
 
 from config import settings
-from domain.models import TaskCreate, TaskType
+from domain.models import TaskCreate, TaskType, TaskStatus
 from infrastructure.pg_repositories.tracked_channels_repository import TrackedChannelsRepository
 from services.tasks_service import TasksService
 from utils.logger import AppLogger
@@ -51,6 +51,10 @@ class RevisitScheduler:
             for channel in channels:
                 try:
                     # Create revisit task using TasksService
+                    maybe_pending_task = self.tasks_service.get_task_by_status(channel_id=channel.channel_id, task_type=TaskType.REVISIT_CHANNEL, task_status=TaskStatus.PENDING)
+                    if maybe_pending_task:
+                        logger.info(f"Revisit task for channel {channel.channel_id} is already pending")
+                        continue
                     task, error = await self.tasks_service.create_task(
                         TaskCreate(
                             task_type=TaskType.REVISIT_CHANNEL,

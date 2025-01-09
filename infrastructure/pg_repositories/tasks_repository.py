@@ -84,6 +84,14 @@ class TasksRepository:
         task_entities = self._session.query(TaskEntity).filter_by(status=status).all()
         return [TaskModel.model_validate(entity) for entity in task_entities]
 
+    def get_task_by_status(self, channel_id: int, task_type: TaskType, status: TaskStatus) -> Optional[TaskModel]:
+        """Get all tasks with specified status"""
+        entity = (self._session.query(TaskEntity)
+                         .filter_by(channel_id=channel_id)
+                         .filter_by(task_type=task_type)
+                         .filter_by(status=status).first())
+        return TaskModel.model_validate(entity) if entity else None
+
     def get_all_tasks(self) -> List[TaskModel]:
         """Get all tasks"""
         task_entities = self._session.query(TaskEntity).all()

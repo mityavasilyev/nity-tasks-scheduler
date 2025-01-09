@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     RABBITMQ_USER: str = "guest"
     RABBITMQ_PASSWORD: str = "guest"
     RABBITMQ_VHOST: str = "collector"
+    RABBITMQ_CHANNEL_TASKS_QUEUE: str = "channel_tasks"
 
     # Worker settings
     WORKER_PROCESSES: int = 1

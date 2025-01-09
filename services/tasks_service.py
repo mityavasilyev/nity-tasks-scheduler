@@ -2,7 +2,7 @@ from typing import List, Optional, Tuple
 
 from injector import inject
 
-from domain.models import TaskCreate, Task, TaskStatus
+from domain.models import TaskCreate, Task, TaskStatus, TaskType
 from infrastructure.pg_repositories.tasks_repository import TasksRepository
 from utils.logger import AppLogger
 from utils.time_utils import TimeUtils
@@ -63,6 +63,9 @@ class TasksService:
     def get_tasks_by_status(self, task_status: TaskStatus) -> List[Task]:
         """Get all tasks with specified status"""
         return self.tasks_repo.get_tasks_by_status(task_status)
+
+    def get_task_by_status(self, channel_id: int, task_type: TaskType, task_status: TaskStatus) -> Optional[Task]:
+        return self.tasks_repo.get_task_by_status(channel_id=channel_id, task_type=task_type, status=task_status)
 
     def get_channel_tasks(self, channel_id: int) -> List[Task]:
         """Get all tasks for a specific channel"""

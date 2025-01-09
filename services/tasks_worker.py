@@ -54,4 +54,4 @@ class TaskExecutionMiddleware(middleware.Middleware):
         except Exception as e:
             logger.error(f"Error in task completion handling: {str(e)}")
         finally:
-            logger.info(f"Task {message.message_id} processing complete")
+            logger.info(f"Task with message_id={message.message_id} processing complete")
