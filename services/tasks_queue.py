@@ -3,6 +3,7 @@ from typing import Union
 
 import dramatiq
 
+from config import settings
 from domain.models import TaskType
 from infrastructure.di.container import get_worker_container
 from infrastructure.nity.channel_intelligence_client import ChannelIntelligenceClient
@@ -40,7 +41,7 @@ async def _revisit_channel_async(channel_id: str):
         return success, message
 
 
-@dramatiq.actor(queue_name="channel_tasks")
+@dramatiq.actor(queue_name=settings.RABBITMQ_CHANNEL_TASKS_QUEUE)
 def start_tracking_channel(channel_id: Union[str, int]):
     """
     Start tracking a new channel.
@@ -65,7 +66,7 @@ def start_tracking_channel(channel_id: Union[str, int]):
         raise
 
 
-@dramatiq.actor(queue_name="channel_tasks")
+@dramatiq.actor(queue_name=settings.RABBITMQ_CHANNEL_TASKS_QUEUE)
 def revisit_channel(channel_id: Union[str, int]):
     """
     Revisit an existing channel to update its data.
