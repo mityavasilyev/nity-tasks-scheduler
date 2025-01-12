@@ -55,6 +55,17 @@ class RevisitScheduler:
                     if maybe_pending_task:
                         logger.info(f"Revisit task for channel {channel.channel_id} is already pending")
                         continue
+
+                    maybe_failed_task = self.tasks_service.get_task_by_status(channel_id=channel.channel_id, task_type=TaskType.REVISIT_CHANNEL, task_status=TaskStatus.FAILED)
+                    if maybe_failed_task:
+                        logger.info(f"Revisit task for channel {channel.channel_id} was failed. It will be retried")
+                        continue
+
+                    maybe_running_task = self.tasks_service.get_task_by_status(channel_id=channel.channel_id, task_type=TaskType.REVISIT_CHANNEL, task_status=TaskStatus.RUNNING)
+                    if maybe_running_task:
+                        logger.info(f"Revisit task for channel {channel.channel_id} is already running")
+                        continue
+
                     task, error = await self.tasks_service.create_task(
                         TaskCreate(
                             task_type=TaskType.REVISIT_CHANNEL,

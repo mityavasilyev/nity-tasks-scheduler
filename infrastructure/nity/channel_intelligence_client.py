@@ -21,7 +21,7 @@ class ChannelIntelligenceClient(BaseGrpcClient[ChannelIntelligenceStub]):
 
     async def start_tracking_new_channel(self, channel_id: int) -> Tuple[bool, str]:
         try:
-            response = await self.stub.start_tracking_new_channel(channel_id=str(channel_id))
+            response = await self.stub.start_tracking_new_channel(channel_id=channel_id)
             if not response.success:
                 raise ValueError(f"Failed to start tracking channel {channel_id}: {response.message}")
             return response.success, response.message
