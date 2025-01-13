@@ -53,7 +53,7 @@ class GrpcModule(Module):
     @provider
     @singleton
     def provide_grpc_server_config(self) -> GrpcServerConfig:
-        return GrpcServerConfig(port=50053)
+        return GrpcServerConfig(port=settings.GRPC_SERVER_PORT)
 
     @provider
     @singleton

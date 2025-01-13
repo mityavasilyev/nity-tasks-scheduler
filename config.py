@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     REVISIT_INTERVAL_MINUTES: int = 360  # 6 hours
     REVISIT_CHECK_INTERVAL_SECONDS: int = 60  # How often to check for due channels
 
+    # gRPC Server Configuration
+    GRPC_SERVER_PORT: int = 50051
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

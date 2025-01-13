@@ -60,7 +60,7 @@ def start_tracking_channel(channel_id: Union[str, int]):
             raise RuntimeError(f"Failed to start tracking: {message}")
 
         logger.info(f"Successfully started tracking channel: {channel_id_str}")
-        return success, message
+        return
     except Exception as e:
         logger.error(f"Error in start_tracking_channel: {str(e)}")
         raise
@@ -85,7 +85,7 @@ def revisit_channel(channel_id: Union[str, int]):
             raise RuntimeError(f"Failed to revisit: {message}")
 
         logger.info(f"Successfully revisited channel: {channel_id_str}")
-        return success, message
+        return
     except Exception as e:
         logger.error(f"Error in revisit_channel: {str(e)}")
         raise
