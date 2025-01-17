@@ -1,12 +1,12 @@
 import logging
 import sys
 
-from config import settings
-from infrastructure.di.container import get_container, get_worker_container
-
-from services import tasks_queue
-from utils.logger import AppLogger
 from dramatiq.cli import main as dramatiq_main
+
+from config import settings
+from services import tasks_queue
+from services.tasks_health import SimpleHealthCheck
+from utils.logger import AppLogger
 
 # Configure logging
 AppLogger.setup(log_file='worker.log', level=logging.DEBUG)
@@ -34,4 +34,5 @@ def run_worker():
 
 
 if __name__ == "__main__":
+    healthcheck = SimpleHealthCheck(80)
     run_worker()
