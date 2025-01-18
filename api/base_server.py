@@ -11,7 +11,7 @@ from utils.logger import AppLogger
 @dataclass
 class GrpcServerConfig:
     port: int = 50051
-    host: str = "127.0.0.1"
+    host: str = "0.0.0.0"
 
 
 TService = TypeVar('TService')
