@@ -48,7 +48,8 @@ class BrokerClient:
         # Check if vhost exists
         response = requests.get(
             api_url,
-            auth=HTTPBasicAuth(settings.RABBITMQ_USER, settings.RABBITMQ_PASSWORD)
+            auth=HTTPBasicAuth(settings.RABBITMQ_USER, settings.RABBITMQ_PASSWORD),
+            timeout=10
         )
 
         if response.status_code == 404:
@@ -70,7 +71,8 @@ class BrokerClient:
             response = requests.put(
                 permissions_url,
                 json=permissions_data,
-                auth=HTTPBasicAuth(settings.RABBITMQ_USER, settings.RABBITMQ_PASSWORD)
+                auth=HTTPBasicAuth(settings.RABBITMQ_USER, settings.RABBITMQ_PASSWORD),
+                timeout=10
             )
             response.raise_for_status()
 
