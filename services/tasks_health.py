@@ -26,5 +26,5 @@ class SimpleHealthCheck(middleware.Middleware):
                 # Suppress logging
                 pass
 
-        server = HTTPServer(('0.0.0.0', self.port), Handler)
+        server = HTTPServer(('', self.port), Handler)
         server.serve_forever()
