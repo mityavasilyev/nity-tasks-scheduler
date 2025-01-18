@@ -11,9 +11,8 @@ AppLogger.setup(log_file='assistant.log', level=logging.INFO)
 logger = AppLogger.get_logger(__name__)
 
 
-async def main():
+async def start_services():
     """Initialize services on startup"""
-    await run_health_server()
     container = get_container()
     logger.info("All services started successfully")
     server = container.get(TasksGrpcServer)
@@ -21,6 +20,14 @@ async def main():
     asyncio.create_task(revisit_scheduler.start())
     await server.serve()
 
+async def main():
+    try:
+        await asyncio.gather(
+            run_health_server(),
+            start_services()
+        )
+    except Exception as e:
+        logger.error(f"Unhandled error in main: {e}")
 
 if __name__ == '__main__':
     asyncio.run(main())

@@ -20,5 +20,5 @@ EXPOSE 50051
 # Use an argument to specify the main file at build time
 ARG MAIN_FILE=main.py
 
-# Use the argument in the CMD
-CMD ["python", "${MAIN_FILE}"]
+# Use the argument in the CMD with proper shell form
+CMD ["python", "main_scheduler.py"]

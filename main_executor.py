@@ -9,7 +9,7 @@ from services.tasks_health import SimpleHealthCheck
 from utils.logger import AppLogger
 
 # Configure logging
-AppLogger.setup(log_file='worker.log', level=logging.DEBUG)
+AppLogger.setup(log_file='worker.log', level=logging.INFO)
 logger = AppLogger.get_logger(__name__)
 
 

@@ -17,6 +17,6 @@ async def run_health_server():
     logger.info('Starting health server')
     runner = web.AppRunner(app)
     await runner.setup()
-    site = web.TCPSite(runner, port=80)
+    site = web.TCPSite(runner, port=8080)
     await site.start()
     logger.info('Health server started at http://localhost:8080/health')

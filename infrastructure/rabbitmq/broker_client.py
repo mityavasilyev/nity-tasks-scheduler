@@ -43,7 +43,7 @@ class BrokerClient:
 
     def _create_vhost_via_api(self):
         """Create virtual host using RabbitMQ HTTP API"""
-        api_url = f"http://{settings.RABBITMQ_HOST}:15672/api/vhosts/{settings.RABBITMQ_VHOST}"
+        api_url = f"http://{settings.RABBITMQ_HOST}:{settings.RABBITMQ_UTILITY_PORT}/api/vhosts/{settings.RABBITMQ_VHOST}"
 
         # Check if vhost exists
         response = requests.get(
@@ -61,7 +61,7 @@ class BrokerClient:
             response.raise_for_status()
 
             # Set permissions for the user on the new vhost
-            permissions_url = f"http://{settings.RABBITMQ_HOST}:15672/api/permissions/{settings.RABBITMQ_VHOST}/{settings.RABBITMQ_USER}"
+            permissions_url = f"http://{settings.RABBITMQ_HOST}:{settings.RABBITMQ_UTILITY_PORT}/api/permissions/{settings.RABBITMQ_VHOST}/{settings.RABBITMQ_USER}"
             permissions_data = {
                 "configure": ".*",
                 "write": ".*",

@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     # RabbitMQ settings
     RABBITMQ_HOST: str = "localhost"
     RABBITMQ_PORT: int = 5672
+    RABBITMQ_UTILITY_PORT: int = 15672
     RABBITMQ_USER: str = "guest"
     RABBITMQ_PASSWORD: str = "guest"
     RABBITMQ_VHOST: str = "collector"
