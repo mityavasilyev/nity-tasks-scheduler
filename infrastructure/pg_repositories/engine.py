@@ -1,3 +1,5 @@
+from contextlib import contextmanager
+
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy import create_engine
 from config import settings
@@ -25,6 +27,7 @@ Session = sessionmaker(bind=engine)
 
 logger.info(f"Database connection established: {settings.DATABASE_URL}")
 
+@contextmanager
 def get_session():
     session = Session()
     try:

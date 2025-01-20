@@ -1,9 +1,11 @@
 import asyncio
+import traceback
 
 from injector import inject
 
 from config import settings
 from domain.models import TaskCreate, TaskType, TaskStatus
+from infrastructure.pg_repositories.engine import get_session
 from infrastructure.pg_repositories.tracked_channels_repository import TrackedChannelsRepository
 from services.tasks_service import TasksService
 from utils.logger import AppLogger
@@ -34,6 +36,7 @@ class RevisitScheduler:
             except Exception as e:
                 logger.error(f"Error in scheduler loop: {str(e)}")
                 # Wait a bit before retrying
+                traceback.print_exc()
                 await asyncio.sleep(5)
 
     def stop(self):
@@ -44,41 +47,49 @@ class RevisitScheduler:
         """Process all channels that are due for revisit"""
         try:
             # Get channels that need revisiting based on interval
-            channels = self.repository.get_channels_due_revisit(
-                interval_minutes=settings.REVISIT_INTERVAL_MINUTES
-            )
+            with get_session() as session:
+                channels = self.repository.get_channels_due_revisit(
+                    session=session,
+                    interval_minutes=settings.REVISIT_INTERVAL_MINUTES
+                )
 
-            for channel in channels:
-                try:
-                    # Create revisit task using TasksService
-                    maybe_pending_task = self.tasks_service.get_task_by_status(channel_id=channel.channel_id, task_type=TaskType.REVISIT_CHANNEL, task_status=TaskStatus.PENDING)
-                    if maybe_pending_task:
-                        logger.info(f"Revisit task for channel {channel.channel_id} is already pending")
-                        continue
+                for channel in channels:
+                    try:
+                        # Create revisit task using TasksService
+                        maybe_pending_task = self.tasks_service.get_task_by_status(channel_id=channel.channel_id,
+                                                                                   task_type=TaskType.REVISIT_CHANNEL,
+                                                                                   task_status=TaskStatus.PENDING)
+                        if maybe_pending_task:
+                            logger.info(f"Revisit task for channel {channel.channel_id} is already pending")
+                            continue
 
-                    maybe_failed_task = self.tasks_service.get_task_by_status(channel_id=channel.channel_id, task_type=TaskType.REVISIT_CHANNEL, task_status=TaskStatus.FAILED)
-                    if maybe_failed_task:
-                        logger.info(f"Revisit task for channel {channel.channel_id} was failed. It will be retried")
-                        continue
+                        maybe_failed_task = self.tasks_service.get_task_by_status(channel_id=channel.channel_id,
+                                                                                  task_type=TaskType.REVISIT_CHANNEL,
+                                                                                  task_status=TaskStatus.FAILED)
+                        if maybe_failed_task:
+                            logger.info(f"Revisit task for channel {channel.channel_id} was failed. It will be retried")
+                            continue
 
-                    maybe_running_task = self.tasks_service.get_task_by_status(channel_id=channel.channel_id, task_type=TaskType.REVISIT_CHANNEL, task_status=TaskStatus.RUNNING)
-                    if maybe_running_task:
-                        logger.info(f"Revisit task for channel {channel.channel_id} is already running")
-                        continue
+                        maybe_running_task = self.tasks_service.get_task_by_status(channel_id=channel.channel_id,
+                                                                                   task_type=TaskType.REVISIT_CHANNEL,
+                                                                                   task_status=TaskStatus.RUNNING)
+                        if maybe_running_task:
+                            logger.info(f"Revisit task for channel {channel.channel_id} is already running")
+                            continue
 
-                    task, error = await self.tasks_service.create_task(
-                        TaskCreate(
-                            task_type=TaskType.REVISIT_CHANNEL,
-                            channel_id=channel.channel_id
+                        task, error = await self.tasks_service.create_task(
+                            TaskCreate(
+                                task_type=TaskType.REVISIT_CHANNEL,
+                                channel_id=channel.channel_id
+                            )
                         )
-                    )
-                    logger.info(
-                        f"Created revisit task {task.id} for channel {channel.channel_id}"
-                    )
-                except Exception as e:
-                    logger.error(
-                        f"Failed to create revisit task for channel {channel.channel_id}: {str(e)}"
-                    )
+                        logger.info(
+                            f"Created revisit task {task.id} for channel {channel.channel_id}"
+                        )
+                    except Exception as e:
+                        logger.error(
+                            f"Failed to create revisit task for channel {channel.channel_id}: {str(e)}"
+                        )
         except Exception as e:
             logger.error(f"Error processing due channels: {str(e)}")
             raise

@@ -4,8 +4,8 @@ from typing import List, Optional
 from sqlalchemy import Column, Integer, Boolean, DateTime, BigInteger, select, update
 from sqlalchemy.orm import Session
 
-from infrastructure.pg_repositories.engine import Base, engine
 from domain.models import TrackedChannel
+from infrastructure.pg_repositories.engine import Base, engine
 from utils.logger import AppLogger
 from utils.time_utils import TimeUtils
 
@@ -23,11 +23,10 @@ class TrackedChannelEntity(Base):
 
 
 class TrackedChannelsRepository:
-    def __init__(self, session: Session):
-        self._session = session
+    def __init__(self):
         Base.metadata.create_all(engine)
 
-    def add_channel(self, channel_id: int) -> TrackedChannel:
+    def add_channel(self, session: Session, channel_id: int) -> TrackedChannel:
         """Add a new channel to tracking"""
         try:
             channel_entity = TrackedChannelEntity(
@@ -36,16 +35,16 @@ class TrackedChannelsRepository:
                 last_revisited=TimeUtils.current_datetime(),
                 created_at=TimeUtils.current_datetime()
             )
-            self._session.add(channel_entity)
-            self._session.commit()
-            self._session.refresh(channel_entity)
+            session.add(channel_entity)
+            session.commit()
+            session.refresh(channel_entity)
             return TrackedChannel.model_validate(channel_entity)
         except Exception as e:
-            self._session.rollback()
+            session.rollback()
             logger.error(f"Failed to add channel: {str(e)}")
             raise
 
-    def update_last_revisited(self, channel_id: int) -> Optional[TrackedChannel]:
+    def update_last_revisited(self, session: Session, channel_id: int) -> Optional[TrackedChannel]:
         """Update last_revisited timestamp for a channel"""
         try:
             stmt = update(TrackedChannelEntity).where(
@@ -54,16 +53,16 @@ class TrackedChannelsRepository:
                 last_revisited=TimeUtils.current_datetime()
             ).returning(TrackedChannelEntity)
 
-            result = self._session.execute(stmt)
-            self._session.commit()
+            result = session.execute(stmt)
+            session.commit()
             updated = result.scalar_one_or_none()
             return TrackedChannel.model_validate(updated) if updated else None
         except Exception as e:
-            self._session.rollback()
+            session.rollback()
             logger.error(f"Failed to update last_revisited: {str(e)}")
             raise
 
-    def get_channels_due_revisit(self, interval_minutes: int) -> List[TrackedChannel]:
+    def get_channels_due_revisit(self, session: Session, interval_minutes: int) -> List[TrackedChannel]:
         """Get all channels that haven't been revisited in the specified interval"""
 
         # All channels that were last time revisited BEFORE the cutoff time will be fetched
@@ -71,15 +70,15 @@ class TrackedChannelsRepository:
         stmt = select(TrackedChannelEntity).where(
             TrackedChannelEntity.revisiting == True,
             (
-                TrackedChannelEntity.last_revisited.is_(None) |
-                (TrackedChannelEntity.last_revisited <= datetime.fromtimestamp(cutoff_time))
+                    TrackedChannelEntity.last_revisited.is_(None) |
+                    (TrackedChannelEntity.last_revisited <= datetime.fromtimestamp(cutoff_time))
             )
         )
-        result = self._session.execute(stmt)
+        result = session.execute(stmt)
         channels = result.scalars().all()
         return [TrackedChannel.model_validate(ch) for ch in channels]
 
-    def set_revisiting(self, channel_id: int, revisiting: bool) -> Optional[TrackedChannel]:
+    def set_revisiting(self, session: Session, channel_id: int, revisiting: bool) -> Optional[TrackedChannel]:
         """Enable or disable revisiting for a channel"""
         try:
             stmt = update(TrackedChannelEntity).where(
@@ -88,16 +87,16 @@ class TrackedChannelsRepository:
                 revisiting=revisiting
             ).returning(TrackedChannelEntity)
 
-            result = self._session.execute(stmt)
-            self._session.commit()
+            result = session.execute(stmt)
+            session.commit()
             updated = result.scalar_one_or_none()
             return TrackedChannel.model_validate(updated) if updated else None
         except Exception as e:
-            self._session.rollback()
+            session.rollback()
             logger.error(f"Failed to update revisiting status: {str(e)}")
             raise
 
-    def get_channel(self, channel_id: int) -> Optional[TrackedChannel]:
+    def get_channel(self, session: Session, channel_id: int) -> Optional[TrackedChannel]:
         """Get channel by ID"""
-        channel = self._session.query(TrackedChannelEntity).filter_by(channel_id=channel_id).first()
+        channel = session.query(TrackedChannelEntity).filter_by(channel_id=channel_id).first()
         return TrackedChannel.model_validate(channel) if channel else None

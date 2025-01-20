@@ -2,6 +2,7 @@ from dramatiq import middleware
 from injector import inject
 
 from domain.models import TaskStatus, TaskType
+from infrastructure.pg_repositories.engine import get_session
 from infrastructure.pg_repositories.tasks_repository import TasksRepository
 from infrastructure.pg_repositories.tracked_channels_repository import TrackedChannelsRepository
 from utils.logger import AppLogger
@@ -20,10 +21,12 @@ class TaskExecutionMiddleware(middleware.Middleware):
     def before_process_message(self, broker, message):
         """Set task to RUNNING state"""
         logger.info(f"Starting task with message_id={message.message_id}")
-        self.tasks_repository.update_task_status(
-            message_id=message.message_id,
-            status=TaskStatus.RUNNING
-        )
+        with get_session() as session:
+            self.tasks_repository.update_task_status(
+                session=session,
+                message_id=message.message_id,
+                status=TaskStatus.RUNNING
+            )
 
     def after_process_message(self, broker, message, *, result=None, exception=None):
         """Handle task completion and channel tracking"""
@@ -32,24 +35,26 @@ class TaskExecutionMiddleware(middleware.Middleware):
             error_message = str(exception) if exception else None
 
             # Update task status
-            task = self.tasks_repository.update_task_status(
-                message_id=message.message_id,
-                status=status,
-                error_message=error_message
-            )
+            with get_session() as session:
+                task = self.tasks_repository.update_task_status(
+                    session=session,
+                    message_id=message.message_id,
+                    status=status,
+                    error_message=error_message
+                )
 
-            if status == TaskStatus.COMPLETED:
-                if task.task_type == TaskType.START_TRACKING:
-                    # Add new channel to tracking
-                    channel_id = int(task.channel_id)
-                    self.tracked_channels_repository.add_channel(channel_id)
-                    logger.info(f"Started tracking channel {channel_id}")
+                if status == TaskStatus.COMPLETED:
+                    if task.task_type == TaskType.START_TRACKING:
+                        # Add new channel to tracking
+                        channel_id = int(task.channel_id)
+                        self.tracked_channels_repository.add_channel(session, channel_id)
+                        logger.info(f"Started tracking channel {channel_id}")
 
-                elif task.task_type == TaskType.REVISIT_CHANNEL:
-                    # Update last revisit time
-                    channel_id = int(task.channel_id)
-                    self.tracked_channels_repository.update_last_revisited(channel_id)
-                    logger.info(f"Updated last visit time for channel {channel_id}")
+                    elif task.task_type == TaskType.REVISIT_CHANNEL:
+                        # Update last revisit time
+                        channel_id = int(task.channel_id)
+                        self.tracked_channels_repository.update_last_revisited(session, channel_id)
+                        logger.info(f"Updated last visit time for channel {channel_id}")
 
         except Exception as e:
             logger.error(f"Error in task completion handling: {str(e)}")

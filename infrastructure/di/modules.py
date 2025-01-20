@@ -6,18 +6,10 @@ from api.server import TasksGrpcServer
 from api.service import TasksGrpcService
 from config import settings
 from infrastructure.nity.channel_intelligence_client import ChannelIntelligenceConfig, ChannelIntelligenceClient
-from infrastructure.pg_repositories.engine import Session as SQLAlchemySession
 from infrastructure.pg_repositories.tasks_repository import TasksRepository
 from infrastructure.pg_repositories.tracked_channels_repository import TrackedChannelsRepository
 from infrastructure.rabbitmq.broker_client import BrokerClient
 from services.tasks_service import TasksService
-
-
-class PostgresModule(Module):
-    @provider
-    @singleton
-    def provide_session(self) -> Session:
-        return SQLAlchemySession()
 
 
 class RabbitMqModule(Module):
@@ -39,13 +31,13 @@ class RepositoriesModule(Module):
 
     @provider
     @singleton
-    def provide_tasks_repository(self, session: Session) -> TasksRepository:
-        return TasksRepository(session)
+    def provide_tasks_repository(self) -> TasksRepository:
+        return TasksRepository()
 
     @provider
     @singleton
-    def provide_tracked_channels_repository(self, session: Session) -> TrackedChannelsRepository:
-        return TrackedChannelsRepository(session)
+    def provide_tracked_channels_repository(self) -> TrackedChannelsRepository:
+        return TrackedChannelsRepository()
 
 
 class GrpcModule(Module):
