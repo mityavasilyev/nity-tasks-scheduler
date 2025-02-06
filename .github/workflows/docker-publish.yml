@@ -87,7 +87,7 @@ jobs:
 
       - name: Build and push Docker image for nity-tasks-executor
         run: |
-          docker build -t ${{ env.REGISTRY }}/${{ secrets.YC_REGISTRY_ID }}/${{ env.EXECUTOR_IMAGE_NAME }}:${{ steps.bump_version.outputs.new_version }} \
+          docker build -f Dockerfile.scheduler -t ${{ env.REGISTRY }}/${{ secrets.YC_REGISTRY_ID }}/${{ env.EXECUTOR_IMAGE_NAME }}:${{ steps.bump_version.outputs.new_version }} \
           -t ${{ env.REGISTRY }}/${{ secrets.YC_REGISTRY_ID }}/${{ env.EXECUTOR_IMAGE_NAME }}:latest .
 
           docker push ${{ env.REGISTRY }}/${{ secrets.YC_REGISTRY_ID }}/${{ env.EXECUTOR_IMAGE_NAME }}:${{ steps.bump_version.outputs.new_version }}
@@ -96,7 +96,7 @@ jobs:
 
       - name: Build and push Docker image for nity-tasks-scheduler
         run: |
-          docker build -t ${{ env.REGISTRY }}/${{ secrets.YC_REGISTRY_ID }}/${{ env.SCHEDULER_IMAGE_NAME }}:${{ steps.bump_version.outputs.new_version }} \
+          docker build -f Dockerfile.executor -t ${{ env.REGISTRY }}/${{ secrets.YC_REGISTRY_ID }}/${{ env.SCHEDULER_IMAGE_NAME }}:${{ steps.bump_version.outputs.new_version }} \
           -t ${{ env.REGISTRY }}/${{ secrets.YC_REGISTRY_ID }}/${{ env.SCHEDULER_IMAGE_NAME }}:latest .
 
           docker push ${{ env.REGISTRY }}/${{ secrets.YC_REGISTRY_ID }}/${{ env.SCHEDULER_IMAGE_NAME }}:${{ steps.bump_version.outputs.new_version }}
