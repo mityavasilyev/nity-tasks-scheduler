@@ -47,8 +47,12 @@ class TaskExecutionMiddleware(middleware.Middleware):
                     if task.task_type == TaskType.START_TRACKING:
                         # Add new channel to tracking
                         channel_id = int(task.channel_id)
-                        self.tracked_channels_repository.add_channel(session, channel_id)
-                        logger.info(f"Started tracking channel {channel_id}")
+                        maybe_tracked_channel = self.tracked_channels_repository.get_channel(session, channel_id)
+                        if maybe_tracked_channel:
+                            logger.info(f"Channel {channel_id} is already tracked")
+                        else:
+                            self.tracked_channels_repository.add_channel(session, channel_id)
+                            logger.info(f"Started tracking channel {channel_id}")
 
                     elif task.task_type == TaskType.REVISIT_CHANNEL:
                         # Update last revisit time
