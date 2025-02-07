@@ -37,6 +37,7 @@ class Task(TaskBase):
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
     error_message: Optional[str] = None
+    user_id_to_notify: Optional[int] = None
 
 
 class TrackedChannel(BaseModel):

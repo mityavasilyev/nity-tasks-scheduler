@@ -11,6 +11,10 @@ on:
           - patch
           - minor
           - major
+      release_message:
+        description: 'Optional additional release message'
+        required: false
+        type: string
 
 env:
   REGISTRY: cr.yandex
@@ -112,3 +116,7 @@ jobs:
             ## Manual Release (${{ github.event.inputs.version_type }})
             - Image: `${{ env.REGISTRY }}/${{ secrets.YC_REGISTRY_ID }}/${{ env.EXECUTOR_IMAGE_NAME }}:${{ steps.bump_version.outputs.new_version }}`
             - Image: `${{ env.REGISTRY }}/${{ secrets.YC_REGISTRY_ID }}/${{ env.SCHEDULER_IMAGE_NAME }}:${{ steps.bump_version.outputs.new_version }}`
+            ${{ github.event.inputs.release_message != '' && format('
+
+            ### Description
+            {0}', github.event.inputs.release_message) || '' }}

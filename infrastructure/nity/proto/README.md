@@ -7,3 +7,7 @@ pip install "betterproto[compiler]" grpclib
 ```zsh
 python -m grpc_tools.protoc -I. --python_betterproto_out=. intelligence_service.proto
 ```
+
+```zsh
+python -m grpc_tools.protoc -I. --python_betterproto_out=. telegram_bot_service.proto
+```

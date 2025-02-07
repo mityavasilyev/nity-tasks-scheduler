@@ -5,7 +5,7 @@ from injector import inject
 
 from api.base_service import BaseGrpcService
 from api.proto.tasks import CreateTaskRequest, CreateTaskResponse, GetTaskRequest, GetTaskResponse, \
-    GetChannelTasksRequest, GetChannelTasksResponse
+    GetChannelTasksRequest, GetChannelTasksResponse, CreateTaskWithUserNotificationRequest
 from domain.models import Task, TaskCreate, TaskType
 from services.tasks_service import TasksService
 from utils.logger import AppLogger
@@ -28,7 +28,8 @@ class TasksGrpcService(BaseGrpcService):
         return {
             "CreateTask": ("create_task", CreateTaskRequest, CreateTaskResponse),
             "GetTask": ("get_task", GetTaskRequest, GetTaskResponse),
-            "GetChannelTasks": ("get_channel_tasks", GetTaskRequest, GetTaskResponse)
+            "GetChannelTasks": ("get_channel_tasks", GetTaskRequest, GetTaskResponse),
+            "CreateTaskWithUserNotification": ("create_task_with_user_notification", CreateTaskWithUserNotificationRequest, CreateTaskResponse),
         }
 
     @inject
@@ -52,6 +53,29 @@ class TasksGrpcService(BaseGrpcService):
             handler=handler,
             response_factory=response_factory
         )
+
+    async def create_task_with_user_notification(self, stream: Stream[CreateTaskWithUserNotificationRequest, CreateTaskResponse]) -> None:
+        async def handler(req: CreateTaskWithUserNotificationRequest) -> Tuple[Optional[Task], Optional[str]]:
+            return await self.tasks_service.create_task(
+                TaskCreate(
+                    channel_id=req.channel_id,
+                    task_type=self._task_type_from_proto(req.task_type),
+                ),
+                user_id_to_notify=req.user_id_to_notify
+            )
+
+        def response_factory(result: Tuple[Optional[Task], Optional[str]]) -> CreateTaskResponse:
+            task, error = result
+            if error:
+                raise Exception(error)
+            return CreateTaskResponse(task_id=task.id, error_message="")
+
+        await self._handle_request(
+            stream=stream,
+            handler=handler,
+            response_factory=response_factory
+        )
+
 
     async def get_task(self, stream: Stream[GetTaskRequest, GetTaskResponse]) -> None:
         pass

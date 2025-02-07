@@ -4,6 +4,8 @@ package tasks;
 
 service TasksService {
 
+  rpc CreateTaskWithUserNotification(CreateTaskWithUserNotificationRequest) returns (CreateTaskResponse);
+
   rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse);
 
   rpc GetTask(GetTaskRequest) returns (GetTaskResponse);
@@ -33,6 +35,12 @@ message Task {
 message CreateTaskRequest {
   int64 channel_id = 1;
   TaskType task_type = 2;
+}
+
+message CreateTaskWithUserNotificationRequest {
+  int64 channel_id = 1;
+  TaskType task_type = 2;
+  int64 user_id_to_notify = 3;
 }
 
 message CreateTaskResponse {

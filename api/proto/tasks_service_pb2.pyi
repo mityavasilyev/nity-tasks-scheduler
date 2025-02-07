@@ -96,6 +96,27 @@ class CreateTaskRequest(google.protobuf.message.Message):
 global___CreateTaskRequest = CreateTaskRequest
 
 @typing.final
+class CreateTaskWithUserNotificationRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    CHANNEL_ID_FIELD_NUMBER: builtins.int
+    TASK_TYPE_FIELD_NUMBER: builtins.int
+    USER_ID_TO_NOTIFY_FIELD_NUMBER: builtins.int
+    channel_id: builtins.int
+    task_type: global___TaskType.ValueType
+    user_id_to_notify: builtins.int
+    def __init__(
+        self,
+        *,
+        channel_id: builtins.int = ...,
+        task_type: global___TaskType.ValueType = ...,
+        user_id_to_notify: builtins.int = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["channel_id", b"channel_id", "task_type", b"task_type", "user_id_to_notify", b"user_id_to_notify"]) -> None: ...
+
+global___CreateTaskWithUserNotificationRequest = CreateTaskWithUserNotificationRequest
+
+@typing.final
 class CreateTaskResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 

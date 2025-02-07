@@ -1,11 +1,11 @@
 from injector import Module, singleton, provider
-from sqlalchemy.orm import Session
 
 from api.base_server import GrpcServerConfig
 from api.server import TasksGrpcServer
 from api.service import TasksGrpcService
 from config import settings
 from infrastructure.nity.channel_intelligence_client import ChannelIntelligenceConfig, ChannelIntelligenceClient
+from infrastructure.nity.telegram_bot_client import TelegramBotClientConfig, TelegramBotClient
 from infrastructure.pg_repositories.tasks_repository import TasksRepository
 from infrastructure.pg_repositories.tracked_channels_repository import TrackedChannelsRepository
 from infrastructure.rabbitmq.broker_client import BrokerClient
@@ -75,6 +75,22 @@ class GrpcClientsModule(Module):
             config: ChannelIntelligenceConfig
     ) -> ChannelIntelligenceClient:
         return ChannelIntelligenceClient(config)
+
+    @provider
+    @singleton
+    def provide_telegram_bot_config(self) -> TelegramBotClientConfig:
+        return TelegramBotClientConfig(
+            host=settings.TELEGRAM_BOT_GRPC_HOST,
+            port=settings.TELEGRAM_BOT_GRPC_PORT
+        )
+
+    @provider
+    @singleton
+    def provide_telegram_bot_client(
+            self,
+            config: TelegramBotClientConfig
+    ) -> TelegramBotClient:
+        return TelegramBotClient(config)
 
 
 class TasksMiddlewareModule(Module):

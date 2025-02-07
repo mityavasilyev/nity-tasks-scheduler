@@ -25,18 +25,24 @@ class TasksService:
         """Cleanup service"""
         logger.info("Tasks service stopped successfully")
 
-    async def create_task(self, task_create: TaskCreate) -> Tuple[Optional[Task], Optional[str]]:
+    async def create_task(
+            self,
+            task_create: TaskCreate,
+            user_id_to_notify: Optional[int] = None
+    ) -> Tuple[
+        Optional[Task], Optional[str]]:
         """Create and enqueue a new task"""
         try:
             with get_session() as session:
-                # TODO: Add check for valid task type - we can't create start_tracking task for a channel we already know
 
                 # First, store task in database
                 task = self.tasks_repo.create_task(
                     session=session,
                     message_id=TimeUtils.current_datetime().isoformat(),
                     task_type=task_create.task_type,
-                    channel_id=task_create.channel_id)
+                    channel_id=task_create.channel_id,
+                    user_id_to_notify=user_id_to_notify
+                )
 
                 try:
                     from services.tasks_queue import enqueue_task

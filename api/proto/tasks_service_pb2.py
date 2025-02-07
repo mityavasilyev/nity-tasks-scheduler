@@ -13,7 +13,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13tasks_service.proto\x12\x05tasks\"w\n\x04Task\x12\x0f\n\x07task_id\x18\x01 \x01(\x03\x12\x12\n\nchannel_id\x18\x02 \x01(\x03\x12\"\n\ttask_type\x18\x03 \x01(\x0e\x32\x0f.tasks.TaskType\x12&\n\x0btask_status\x18\x04 \x01(\x0e\x32\x11.tasks.TaskStatus\"K\n\x11\x43reateTaskRequest\x12\x12\n\nchannel_id\x18\x01 \x01(\x03\x12\"\n\ttask_type\x18\x02 \x01(\x0e\x32\x0f.tasks.TaskType\"<\n\x12\x43reateTaskResponse\x12\x0f\n\x07task_id\x18\x01 \x01(\x03\x12\x15\n\rerror_message\x18\x02 \x01(\t\"!\n\x0eGetTaskRequest\x12\x0f\n\x07task_id\x18\x01 \x01(\x03\"C\n\x0fGetTaskResponse\x12\x19\n\x04task\x18\x01 \x01(\x0b\x32\x0b.tasks.Task\x12\x15\n\rerror_message\x18\x05 \x01(\t\",\n\x16GetChannelTasksRequest\x12\x12\n\nchannel_id\x18\x01 \x01(\x03\"L\n\x17GetChannelTasksResponse\x12\x1a\n\x05tasks\x18\x01 \x03(\x0b\x32\x0b.tasks.Task\x12\x15\n\rerror_message\x18\x02 \x01(\t*3\n\x08TaskType\x12\x12\n\x0eSTART_TRACKING\x10\x00\x12\x13\n\x0fREVISIT_CHANNEL\x10\x01*A\n\nTaskStatus\x12\x0b\n\x07PENDING\x10\x00\x12\x0b\n\x07RUNNING\x10\x01\x12\r\n\tCOMPLETED\x10\x02\x12\n\n\x06\x46\x41ILED\x10\x03\x32\xdd\x01\n\x0cTasksService\x12\x41\n\nCreateTask\x12\x18.tasks.CreateTaskRequest\x1a\x19.tasks.CreateTaskResponse\x12\x38\n\x07GetTask\x12\x15.tasks.GetTaskRequest\x1a\x16.tasks.GetTaskResponse\x12P\n\x0fGetChannelTasks\x12\x1d.tasks.GetChannelTasksRequest\x1a\x1e.tasks.GetChannelTasksResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13tasks_service.proto\x12\x05tasks\"w\n\x04Task\x12\x0f\n\x07task_id\x18\x01 \x01(\x03\x12\x12\n\nchannel_id\x18\x02 \x01(\x03\x12\"\n\ttask_type\x18\x03 \x01(\x0e\x32\x0f.tasks.TaskType\x12&\n\x0btask_status\x18\x04 \x01(\x0e\x32\x11.tasks.TaskStatus\"K\n\x11\x43reateTaskRequest\x12\x12\n\nchannel_id\x18\x01 \x01(\x03\x12\"\n\ttask_type\x18\x02 \x01(\x0e\x32\x0f.tasks.TaskType\"z\n%CreateTaskWithUserNotificationRequest\x12\x12\n\nchannel_id\x18\x01 \x01(\x03\x12\"\n\ttask_type\x18\x02 \x01(\x0e\x32\x0f.tasks.TaskType\x12\x19\n\x11user_id_to_notify\x18\x03 \x01(\x03\"<\n\x12\x43reateTaskResponse\x12\x0f\n\x07task_id\x18\x01 \x01(\x03\x12\x15\n\rerror_message\x18\x02 \x01(\t\"!\n\x0eGetTaskRequest\x12\x0f\n\x07task_id\x18\x01 \x01(\x03\"C\n\x0fGetTaskResponse\x12\x19\n\x04task\x18\x01 \x01(\x0b\x32\x0b.tasks.Task\x12\x15\n\rerror_message\x18\x05 \x01(\t\",\n\x16GetChannelTasksRequest\x12\x12\n\nchannel_id\x18\x01 \x01(\x03\"L\n\x17GetChannelTasksResponse\x12\x1a\n\x05tasks\x18\x01 \x03(\x0b\x32\x0b.tasks.Task\x12\x15\n\rerror_message\x18\x02 \x01(\t*3\n\x08TaskType\x12\x12\n\x0eSTART_TRACKING\x10\x00\x12\x13\n\x0fREVISIT_CHANNEL\x10\x01*A\n\nTaskStatus\x12\x0b\n\x07PENDING\x10\x00\x12\x0b\n\x07RUNNING\x10\x01\x12\r\n\tCOMPLETED\x10\x02\x12\n\n\x06\x46\x41ILED\x10\x03\x32\xc8\x02\n\x0cTasksService\x12i\n\x1e\x43reateTaskWithUserNotification\x12,.tasks.CreateTaskWithUserNotificationRequest\x1a\x19.tasks.CreateTaskResponse\x12\x41\n\nCreateTask\x12\x18.tasks.CreateTaskRequest\x1a\x19.tasks.CreateTaskResponse\x12\x38\n\x07GetTask\x12\x15.tasks.GetTaskRequest\x1a\x16.tasks.GetTaskResponse\x12P\n\x0fGetChannelTasks\x12\x1d.tasks.GetChannelTasksRequest\x1a\x1e.tasks.GetChannelTasksResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -21,24 +21,26 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'tasks_service_pb2', _global
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  _globals['_TASKTYPE']._serialized_start=518
-  _globals['_TASKTYPE']._serialized_end=569
-  _globals['_TASKSTATUS']._serialized_start=571
-  _globals['_TASKSTATUS']._serialized_end=636
+  _globals['_TASKTYPE']._serialized_start=642
+  _globals['_TASKTYPE']._serialized_end=693
+  _globals['_TASKSTATUS']._serialized_start=695
+  _globals['_TASKSTATUS']._serialized_end=760
   _globals['_TASK']._serialized_start=30
   _globals['_TASK']._serialized_end=149
   _globals['_CREATETASKREQUEST']._serialized_start=151
   _globals['_CREATETASKREQUEST']._serialized_end=226
-  _globals['_CREATETASKRESPONSE']._serialized_start=228
-  _globals['_CREATETASKRESPONSE']._serialized_end=288
-  _globals['_GETTASKREQUEST']._serialized_start=290
-  _globals['_GETTASKREQUEST']._serialized_end=323
-  _globals['_GETTASKRESPONSE']._serialized_start=325
-  _globals['_GETTASKRESPONSE']._serialized_end=392
-  _globals['_GETCHANNELTASKSREQUEST']._serialized_start=394
-  _globals['_GETCHANNELTASKSREQUEST']._serialized_end=438
-  _globals['_GETCHANNELTASKSRESPONSE']._serialized_start=440
-  _globals['_GETCHANNELTASKSRESPONSE']._serialized_end=516
-  _globals['_TASKSSERVICE']._serialized_start=639
-  _globals['_TASKSSERVICE']._serialized_end=860
+  _globals['_CREATETASKWITHUSERNOTIFICATIONREQUEST']._serialized_start=228
+  _globals['_CREATETASKWITHUSERNOTIFICATIONREQUEST']._serialized_end=350
+  _globals['_CREATETASKRESPONSE']._serialized_start=352
+  _globals['_CREATETASKRESPONSE']._serialized_end=412
+  _globals['_GETTASKREQUEST']._serialized_start=414
+  _globals['_GETTASKREQUEST']._serialized_end=447
+  _globals['_GETTASKRESPONSE']._serialized_start=449
+  _globals['_GETTASKRESPONSE']._serialized_end=516
+  _globals['_GETCHANNELTASKSREQUEST']._serialized_start=518
+  _globals['_GETCHANNELTASKSREQUEST']._serialized_end=562
+  _globals['_GETCHANNELTASKSRESPONSE']._serialized_start=564
+  _globals['_GETCHANNELTASKSRESPONSE']._serialized_end=640
+  _globals['_TASKSSERVICE']._serialized_start=763
+  _globals['_TASKSSERVICE']._serialized_end=1091
 # @@protoc_insertion_point(module_scope)

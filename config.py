@@ -7,7 +7,11 @@ class Settings(BaseSettings):
 
     # Channel Intelligence gRPC settings
     CHANNEL_INTELLIGENCE_GRPC_HOST: str = "localhost"
-    CHANNEL_INTELLIGENCE_GRPC_PORT: int = 50052
+    CHANNEL_INTELLIGENCE_GRPC_PORT: int = 50051
+
+    # Nity telegram bot gRPC settings
+    TELEGRAM_BOT_GRPC_HOST: str = "localhost"
+    TELEGRAM_BOT_GRPC_PORT: int = 50051
 
     # RabbitMQ settings
     RABBITMQ_HOST: str = "localhost"
@@ -24,7 +28,7 @@ class Settings(BaseSettings):
 
     # Channel revisit settings
     REVISIT_INTERVAL_MINUTES: int = 360  # 6 hours
-    REVISIT_CHECK_INTERVAL_SECONDS: int = 60  # How often to check for due channels
+    REVISIT_CHECK_INTERVAL_SECONDS: int = 600  # How often to check for due channels
 
     # gRPC Server Configuration
     GRPC_SERVER_PORT: int = 50051

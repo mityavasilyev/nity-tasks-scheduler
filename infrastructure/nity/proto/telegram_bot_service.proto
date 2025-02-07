@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package user_interactions;
+
+service TelegramBotService {
+
+  rpc NotifyUser(NotifyUserRequest) returns (NotifyUserResponse);
+
+}
+
+message NotifyUserRequest {
+  string message = 1;
+  int64 user_id = 2;
+}
+
+message NotifyUserResponse {
+  bool success = 1;
+}
+

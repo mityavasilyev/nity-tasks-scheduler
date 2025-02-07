@@ -21,22 +21,22 @@ broker_client.broker.add_middleware(middleware=middleware)
 # Set broker as default for dramatiq
 dramatiq.set_broker(broker_client.broker)
 
-client = container.get(ChannelIntelligenceClient)
+intelligence_client = container.get(ChannelIntelligenceClient)
 
 
 async def _start_tracking_channel_async(channel_id: str):
     """Async implementation of channel tracking"""
 
-    async with client.connection():
-        success, message = await client.start_tracking_new_channel(channel_id=int(channel_id))
+    async with intelligence_client.connection():
+        success, message = await intelligence_client.start_tracking_new_channel(channel_id=int(channel_id))
         logger.info(f"Start tracking result: Success={success}, Message={message}")
         return success, message
 
 
 async def _revisit_channel_async(channel_id: str):
     """Async implementation of channel revisiting"""
-    async with client.connection():
-        success, message = await client.revisit_channel(channel_id=int(channel_id))
+    async with intelligence_client.connection():
+        success, message = await intelligence_client.revisit_channel(channel_id=int(channel_id))
         logger.info(f"Revisit result: Success={success}, Message={message}")
         return success, message
 

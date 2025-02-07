@@ -23,20 +23,23 @@ class TaskEntity(Base):
     started_at = Column(DateTime, nullable=True)
     completed_at = Column(DateTime, nullable=True)
     error_message = Column(String, nullable=True)
+    user_id_to_notify = Column(BigInteger, nullable=True)
 
 
 class TasksRepository:
     def __init__(self):
         Base.metadata.create_all(engine)
 
-    def create_task(self, session: Session, message_id: str, task_type: TaskType, channel_id: int) -> TaskModel:
+    def create_task(self, session: Session, message_id: str, task_type: TaskType, channel_id: int,
+                    user_id_to_notify: Optional[int] = None) -> TaskModel:
         """Create a new task record"""
         try:
             task_entity = TaskEntity(
                 message_id=message_id,
                 task_type=task_type,
                 channel_id=channel_id,
-                status=TaskStatus.PENDING
+                status=TaskStatus.PENDING,
+                user_id_to_notify=user_id_to_notify
             )
             session.add(task_entity)
             session.commit()
@@ -84,12 +87,13 @@ class TasksRepository:
         task_entities = session.query(TaskEntity).filter_by(status=status).all()
         return [TaskModel.model_validate(entity) for entity in task_entities]
 
-    def get_task_by_status(self, channel_id: int, session: Session, task_type: TaskType, status: TaskStatus) -> Optional[TaskModel]:
+    def get_task_by_status(self, channel_id: int, session: Session, task_type: TaskType, status: TaskStatus) -> \
+    Optional[TaskModel]:
         """Get all tasks with specified status"""
         entity = (session.query(TaskEntity)
-                         .filter_by(channel_id=channel_id)
-                         .filter_by(task_type=task_type)
-                         .filter_by(status=status).first())
+                  .filter_by(channel_id=channel_id)
+                  .filter_by(task_type=task_type)
+                  .filter_by(status=status).first())
         return TaskModel.model_validate(entity) if entity else None
 
     def get_all_tasks(self, session: Session) -> List[TaskModel]:

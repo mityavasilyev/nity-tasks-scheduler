@@ -35,6 +35,13 @@ class CreateTaskRequest(betterproto.Message):
 
 
 @dataclass
+class CreateTaskWithUserNotificationRequest(betterproto.Message):
+    channel_id: int = betterproto.int64_field(1)
+    task_type: "TaskType" = betterproto.enum_field(2)
+    user_id_to_notify: int = betterproto.int64_field(3)
+
+
+@dataclass
 class CreateTaskResponse(betterproto.Message):
     task_id: int = betterproto.int64_field(1)
     error_message: str = betterproto.string_field(2)
@@ -63,6 +70,24 @@ class GetChannelTasksResponse(betterproto.Message):
 
 
 class TasksServiceStub(betterproto.ServiceStub):
+    async def create_task_with_user_notification(
+        self,
+        *,
+        channel_id: int = 0,
+        task_type: "TaskType" = 0,
+        user_id_to_notify: int = 0,
+    ) -> CreateTaskResponse:
+        request = CreateTaskWithUserNotificationRequest()
+        request.channel_id = channel_id
+        request.task_type = task_type
+        request.user_id_to_notify = user_id_to_notify
+
+        return await self._unary_unary(
+            "/tasks.TasksService/CreateTaskWithUserNotification",
+            request,
+            CreateTaskResponse,
+        )
+
     async def create_task(
         self, *, channel_id: int = 0, task_type: "TaskType" = 0
     ) -> CreateTaskResponse:
