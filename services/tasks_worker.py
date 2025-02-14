@@ -41,12 +41,13 @@ class TaskExecutionMiddleware(middleware.Middleware):
 
             # Update task status
             with get_session() as session:
-                task = self.tasks_repository.update_task_status(
+                updated_task = self.tasks_repository.update_task_status(
                     session=session,
                     message_id=message.message_id,
                     status=status,
                     error_message=error_message
                 )
+                task = self.tasks_repository.get_task_by_id(session, updated_task.id)
 
                 if status == TaskStatus.COMPLETED:
                     if task.task_type == TaskType.START_TRACKING:
