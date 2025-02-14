@@ -32,6 +32,8 @@ class Task(TaskBase):
 
     id: int
     message_id: str
+    task_type: TaskType
+    channel_id: int
     status: TaskStatus
     created_at: datetime
     started_at: Optional[datetime] = None
