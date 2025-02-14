@@ -1,4 +1,5 @@
 import asyncio
+import traceback
 
 from dramatiq import middleware
 from injector import inject
@@ -48,6 +49,9 @@ class TaskExecutionMiddleware(middleware.Middleware):
                     error_message=error_message
                 )
                 task = self.tasks_repository.get_task_by_id(session, updated_task.id)
+                if not task:
+                    logger.error(f"Task not found, message_id={message.message_id}")
+                    return
 
                 if status == TaskStatus.COMPLETED:
                     if task.task_type == TaskType.START_TRACKING:
@@ -76,7 +80,8 @@ class TaskExecutionMiddleware(middleware.Middleware):
                         logger.info(f"Updated last visit time for channel {channel_id}")
 
         except Exception as e:
-            logger.error(f"Error in task completion handling: {str(e)}")
+            traceback.print_exc()
+            logger.error(f"Error in task completion handling: {str(e)}, task_id={task.id}, message={message}")
         finally:
             logger.info(f"Task with message_id={message.message_id} processing complete")
 
